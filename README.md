@@ -83,3 +83,6 @@ I've also included the Version Info executable, which will give you assembly inf
 **ReadMe.txt** - This file
 
 **memories_history.json** - This will be the file that you place into this folder once you've downloaded it from your Snapchat account. It contains JSON data which has information about the type of Memory, the date when it was saved, and the download URL, which are used by Memoire to automate downloading your Memories.
+
+
+[![HitCount](https://hits.dwyl.com/LazySmurf/Memoire.svg?style=flat-square&show=unique)](http://hits.dwyl.com/LazySmurf/Memoire)
