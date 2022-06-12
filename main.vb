@@ -17,6 +17,7 @@
 '-LazySmurf
 
 Imports System
+Imports System.Text
 Imports System.Globalization
 Imports System.ComponentModel
 Imports System.Threading
@@ -243,21 +244,31 @@ Public Class memoireForm
 
             setLabelTxt("Downloading " & DlItmCount.ToString("N0") & " of " & itmCount.ToString("N0") & " (" & PercentComplete.ToString("N0") & "%)", DownloadStatus)
 
+            'Check if Snap Memories folder exists, if not, create it
             If Not System.IO.Directory.Exists(CWD & "\Snap Memories") Then
                 System.IO.Directory.CreateDirectory(CWD & "\Snap Memories")
             End If
-
             Dim ParsedDate As DateTime = DateTime.Parse(thisDate.Replace("UTC", "+0"))
+            'Set folder locations:
+            Dim YearDir As String = ParsedDate.Year
+            Dim MonthDir As String = ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US"))
+            Dim DayDir As String = ParsedDate.ToString("dd-MM-yyyy - dddd", CultureInfo.CreateSpecificCulture("en-US"))
+
+            'Check if a folder exists with this item's year, if not, create it
             If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year) Then
                 System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year)
             End If
-            If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US"))) Then
-                System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US")))
+            'Check if a folder exists with this item's month, if not, create it
+            If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir) Then
+                System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir)
             End If
-            If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US")) & "\" & ParsedDate.ToString("dd-MM-yyyy - dddd", CultureInfo.CreateSpecificCulture("en-US"))) Then
-                System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US")) & "\" & ParsedDate.ToString("dd-MM-yyyy - dddd", CultureInfo.CreateSpecificCulture("en-US")))
+            'Check if a folder exists with this item's day, if not, create it
+            If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir) Then
+                System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir)
             End If
-            Dim fileExt As String = ".unknown"
+            'Check this item's media type
+            Dim fileExt As String = ".unknown" 'By default, we'll make it unknown, just in case we encounter an error.
+            'If for some reason the media type isn't what we expect, we will still download the file, just with the unknown file ext.
             If thisMediaType = "Video" Then
                 fileExt = ".mp4"
             ElseIf thisMediaType = "Image" Then
@@ -265,14 +276,37 @@ Public Class memoireForm
             Else
                 fileExt = ".unknown"
             End If
-            Dim DlDir As String = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US")) & "\" & ParsedDate.ToString("dd-MM-yyyy - dddd", CultureInfo.CreateSpecificCulture("en-US")) & "\"
+            'Set the download directory within the CWD. If your OS requires you to have permissions in this folder,
+            'you may need to run the application as administrator. Otherwise, it should be fine without that.
+            Dim DlDir As String = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir & "\"
             Dim fileName As String = ParsedDate.Hour & "-" & ParsedDate.Minute & "-" & ParsedDate.Second & fileExt
+
+            'Start Download process
+
             Try
-                Using client As New WebClient()
-                    client.DownloadFileAsync(remoteUri, DlDir & fileName)
+                LogText("Sending POST request to: " & vbNewLine & thisDlLink)
+                Dim s As HttpWebRequest
+                Dim enc As UTF8Encoding = New System.Text.UTF8Encoding()
+                s = HttpWebRequest.Create(thisDlLink)
+                s.Method = "POST"
+                Dim postdata As String = thisDlLink
+                Dim postdatabytes As Byte() = enc.GetBytes(postdata)
+
+                Using stream = s.GetRequestStream()
+                    stream.Write(postdatabytes, 0, postdatabytes.Length)
                 End Using
+                Dim PostResult = s.GetResponse()
+                Dim reader As StreamReader = New System.IO.StreamReader(PostResult.GetResponseStream(), enc)
+                Dim responseText As String = reader.ReadToEnd()
+                LogText("POST Response: " & vbNewLine & responseText & vbNewLine)
+                Dim GetURL As Uri = New Uri(responseText)
+
+                Using client As New WebClient()
+                    client.DownloadFileAsync(GetURL, DlDir & fileName)
+                End Using
+
             Catch ex As Exception
-                setTextBoxTxt("Download Error on Item " & DlItmCount & ": " & ex.ToString, ConsoleLog)
+                setTextBoxTxt("Download Error on Item " & DlItmCount & ": " & ex.ToString & vbNewLine, ConsoleLog)
             End Try
         Next
     End Sub
