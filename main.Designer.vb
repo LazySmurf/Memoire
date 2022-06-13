@@ -259,7 +259,7 @@ Partial Class memoireForm
         Me.DownloadStatus.Name = "DownloadStatus"
         Me.DownloadStatus.Size = New System.Drawing.Size(344, 27)
         Me.DownloadStatus.TabIndex = 3
-        Me.DownloadStatus.Text = "Waiting to download..."
+        Me.DownloadStatus.Text = "Ready to Download!"
         Me.DownloadStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'DownloadDescLabel

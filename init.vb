@@ -84,8 +84,15 @@ Partial Class memoireForm 'Extends main form's logic
     End Function
     Private Sub memoireForm_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         If VerMode = False Then
-            If Not MessageBox.Show("Are you sure you want to close Memoire?", "Memoire - Confirm Close", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, 0) = DialogResult.Yes Then
-                e.Cancel = True
+            If Not BGDownloader.IsBusy Then
+                If Not MessageBox.Show("Are you sure you want to close Memoire?", "Memoire - Confirm Close", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, 0) = DialogResult.Yes Then
+                    e.Cancel = True
+                End If
+            End If
+            If BGDownloader.IsBusy Then
+                If Not MessageBox.Show("Memoire is still running!" & vbNewLine & "Closing Memoire while it is downloading may lead to corruption of your image/video file(s). It's recommended that you leave Memoire open until it is finished downloading." & vbNewLine & vbNewLine & "Are you absolutely sure you want to close Memoire?", "Memoire - Still Running!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, 0) = DialogResult.Yes Then
+                    e.Cancel = True
+                End If
             End If
         End If
     End Sub
@@ -275,8 +282,10 @@ Partial Class memoireForm 'Extends main form's logic
         'Pass text to this function to log it to the console and go to the next line automatically.
         If DebuggingMode = True Then
             ConsoleLog.AppendText(logentry & vbNewLine) 'Append text to the console and go to the next line.
+            Return True
+        Else
+            Return False
         End If
-        Return True
     End Function
 
     Private Sub SecChecker_Tick(sender As Object, e As EventArgs) Handles SecChecker.Tick

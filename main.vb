@@ -222,8 +222,6 @@ Public Class memoireForm
         BGDownloader.RunWorkerAsync()
         DLProgBar.Minimum = 0
         DLProgBar.Maximum = itmCount
-        CloseBox.Visible = False
-        MinBox.Visible = False
     End Sub
 
     Private Sub BGDownloader_DoWork(sender As Object, e As DoWorkEventArgs) Handles BGDownloader.DoWork
@@ -246,45 +244,72 @@ Public Class memoireForm
 
             'Check if Snap Memories folder exists, if not, create it
             If Not System.IO.Directory.Exists(CWD & "\Snap Memories") Then
+                setTextBoxTxt("Creating '\Snap Memories' Folder", ConsoleLog)
                 System.IO.Directory.CreateDirectory(CWD & "\Snap Memories")
             End If
             Dim ParsedDate As DateTime = DateTime.Parse(thisDate.Replace("UTC", "+0"))
             'Set folder locations:
             Dim YearDir As String = ParsedDate.Year
             Dim MonthDir As String = ParsedDate.ToString("MM - MMMM", CultureInfo.CreateSpecificCulture("en-US"))
-            Dim DayDir As String = ParsedDate.ToString("dd-MM-yyyy - dddd", CultureInfo.CreateSpecificCulture("en-US"))
+            Dim DayDir As String = ParsedDate.ToString("dd-MM-yyyy", CultureInfo.CreateSpecificCulture("en-US"))
 
             'Check if a folder exists with this item's year, if not, create it
             If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year) Then
                 System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year)
+                setTextBoxTxt("Creating '\Snap Memories\ " & ParsedDate.Year & "' Folder", ConsoleLog)
             End If
             'Check if a folder exists with this item's month, if not, create it
             If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir) Then
                 System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir)
+                setTextBoxTxt("Creating '" & CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "' Folder", ConsoleLog)
             End If
-            'Check if a folder exists with this item's day, if not, create it
-            If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir) Then
-                System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir)
-            End If
+
             'Check this item's media type
             Dim fileExt As String = ".unknown" 'By default, we'll make it unknown, just in case we encounter an error.
+            Dim DlDir As String
             'If for some reason the media type isn't what we expect, we will still download the file, just with the unknown file ext.
             If thisMediaType = "Video" Then
+
                 fileExt = ".mp4"
+                'Check if a folder exists for videos, if not, create it
+                If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Videos") Then
+                    System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Videos")
+                    setTextBoxTxt("Creating '" & CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Videos" & "' Folder", ConsoleLog)
+                End If
+                DlDir = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Videos" & "\"
+
             ElseIf thisMediaType = "Image" Then
+
                 fileExt = ".jpg"
+                'Check if a folder exists for photos, if not, create it
+                If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Images") Then
+                    System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Images")
+                    setTextBoxTxt("Creating '" & CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Images" & "' Folder", ConsoleLog)
+                End If
+                DlDir = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Images" & "\"
+
             Else
+
                 fileExt = ".unknown"
+                'Check if a folder exists for unknown files, if not, create it
+                If Not System.IO.Directory.Exists(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Unknown") Then
+                    System.IO.Directory.CreateDirectory(CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Unknown")
+                    setTextBoxTxt("Creating '" & CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Unknown" & "' Folder", ConsoleLog)
+                End If
+                DlDir = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & "Unknown" & "\"
+
             End If
+
             'Set the download directory within the CWD. If your OS requires you to have permissions in this folder,
             'you may need to run the application as administrator. Otherwise, it should be fine without that.
-            Dim DlDir As String = CWD & "\Snap Memories\" & ParsedDate.Year & "\" & MonthDir & "\" & DayDir & "\"
-            Dim fileName As String = ParsedDate.Hour & "-" & ParsedDate.Minute & "-" & ParsedDate.Second & fileExt
+            Dim fileName As String = ParsedDate.ToString("dd-MM-yyyy H-mm-ss", CultureInfo.CreateSpecificCulture("en-US")) & fileExt
 
             'Start Download process
-
+            'First we send a POST request to the URL provided within the JSON file
+            'This returns another URL which is the direct link to the image.
+            'With this, we can actually download the file.
             Try
-                LogText("Sending POST request to: " & vbNewLine & thisDlLink)
+                setTextBoxTxt("Sending POST request for item " & DlItmCount, ConsoleLog)
                 Dim s As HttpWebRequest
                 Dim enc As UTF8Encoding = New System.Text.UTF8Encoding()
                 s = HttpWebRequest.Create(thisDlLink)
@@ -298,15 +323,25 @@ Public Class memoireForm
                 Dim PostResult = s.GetResponse()
                 Dim reader As StreamReader = New System.IO.StreamReader(PostResult.GetResponseStream(), enc)
                 Dim responseText As String = reader.ReadToEnd()
-                LogText("POST Response: " & vbNewLine & responseText & vbNewLine)
+                setTextBoxTxt("Successful POST Response for item " & DlItmCount, ConsoleLog)
                 Dim GetURL As Uri = New Uri(responseText)
 
-                Using client As New WebClient()
-                    client.DownloadFileAsync(GetURL, DlDir & fileName)
-                End Using
+                'Actually try to dowwnload the file
+                Try
+                    Using client As New WebClient()
+                        setTextBoxTxt("Item Direct URL:" & vbNewLine & responseText, ConsoleLog)
+                        client.DownloadFileAsync(GetURL, DlDir & fileName)
+                        setTextBoxTxt("Download for item " & DlItmCount & " started.", ConsoleLog)
+                        client.Dispose()
+                        setTextBoxTxt("Download complete! (Item " & DlItmCount.ToString("N0") & " of " & itmCount.ToString("N0") & ")" & vbNewLine, ConsoleLog)
+                    End Using
+                Catch ex As Exception
+                    setTextBoxTxt("Error downloading item " & DlItmCount & ": " & ex.ToString, ConsoleLog)
+                    setTextBoxTxt("Item Direct URL:" & vbNewLine & responseText & vbNewLine, ConsoleLog)
+                End Try
 
             Catch ex As Exception
-                setTextBoxTxt("Download Error on Item " & DlItmCount & ": " & ex.ToString & vbNewLine, ConsoleLog)
+                setTextBoxTxt("POST or Download error, item #" & DlItmCount.ToString("N0") & " of " & itmCount.ToString("N0") & ": " & ex.ToString & vbNewLine, ConsoleLog)
             End Try
         Next
     End Sub
@@ -322,9 +357,10 @@ Public Class memoireForm
 
     Private Sub setTextBoxTxt(ByVal text As String, ByVal txtbox As TextBox)
         If txtbox.InvokeRequired Then
-            txtbox.Invoke(New setTextBoxTxtInvoker(AddressOf setTextBoxTxt), txtbox.Text & vbNewLine & text, txtbox)
+            txtbox.Invoke(New setTextBoxTxtInvoker(AddressOf setTextBoxTxt), text, txtbox)
         Else
-            txtbox.Text = text
+            LogText(text)
+            'txtbox.AppendText(text)
         End If
     End Sub
     Private Delegate Sub setTextBoxTxtInvoker(ByVal text As String, ByVal txtbox As TextBox)
@@ -342,8 +378,6 @@ Public Class memoireForm
         BeginDLButton.Text = "Done!"
         DownloadStatus.Text = "Download Complete!"
         LogText("Background Worker completed running.")
-        CloseBox.Visible = True
-        MinBox.Visible = True
     End Sub
 End Class
 
