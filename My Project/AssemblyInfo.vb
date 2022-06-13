@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("Memoire")>
-<Assembly: AssemblyDescription("Uses Snapchat's Download My Data files to recursively download all Memories via the included JSON file")>
+<Assembly: AssemblyDescription("When you need to download all your Snapchat memories easily, Memoire is there for you. Designed with care to download and organize your Snapchat Memories simply.")>
 <Assembly: AssemblyCompany("LazySmurf Development")>
 <Assembly: AssemblyProduct("Memoire")>
 <Assembly: AssemblyCopyright("Copyright © LazySmurf Development 2022")>
@@ -32,6 +32,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("22.06.12.1957")>
-<Assembly: AssemblyFileVersion("1.0.0.1")>
+<Assembly: AssemblyVersion("22.06.13.510")>
+<Assembly: AssemblyFileVersion("1.0.1.0")>
 <Assembly: NeutralResourcesLanguage("en-CA")>

@@ -100,7 +100,7 @@ Partial Class memoireForm 'Extends main form's logic
         For Each arg As String In Environment.GetCommandLineArgs()
             If arg = "-ver" Then
                 VerMode = True
-                MessageBox.Show(Application.ProductName & vbNewLine & vbNewLine & My.Application.Info.Description & vbNewLine & vbNewLine & "Assembly Version" & vbNewLine & " ⮚" & My.Application.Info.Version.ToString & vbNewLine & "Build Version" & vbNewLine & " ⮚" & Application.ProductVersion.ToString & vbNewLine & vbNewLine & "Created By" & vbNewLine & Application.CompanyName & vbNewLine & vbNewLine & My.Application.Info.Copyright & "-" & Date.Today.Year & vbNewLine & My.Application.Info.Trademark, "Memoire - Version Info", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, 0)
+                MessageBox.Show(Application.ProductName & vbNewLine & vbNewLine & My.Application.Info.Description & vbNewLine & vbNewLine & "Assembly Version" & vbNewLine & " ⮚" & My.Application.Info.Version.ToString & vbNewLine & "Build Version" & vbNewLine & " ⮚" & Application.ProductVersion.ToString & vbNewLine & vbNewLine & "Created By" & vbNewLine & Application.CompanyName & vbNewLine & vbNewLine & My.Application.Info.Copyright & "-" & Date.Today.Year & vbNewLine & My.Application.Info.Trademark & vbNewLine & vbNewLine & "Created for Gabrielle ♥", "Memoire - Version Info", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, 0)
                 Close()
             End If
             If arg = "-debug" Then 'If debugging argument is passed at launch,
