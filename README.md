@@ -3,7 +3,7 @@
 ### Memoire is a Windows application designed to easily download your Snapchat Memories all at once.
 ### [Download Memoire](https://github.com/LazySmurf/Memoire/releases)
 
-![Memoire](https://i.imgur.com/mqSjayP.gif)
+![Memoire](https://i.imgur.com/l6srWtp.gif)
 
 Built with .NET Framework 4.8 using Newtonsoft.Json library
 
