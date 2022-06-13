@@ -1,0 +1,16 @@
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Memoire.exe.config
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Memoire.exe
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Memoire.pdb
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Memoire.xml
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Newtonsoft.Json.dll
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\bin\Release\Newtonsoft.Json.xml
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.vbproj.AssemblyReference.cache
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.vbproj.SuggestedBindingRedirects.cache
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.memoireForm.resources
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.Resources.resources
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.vbproj.GenerateResource.cache
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.vbproj.CoreCompileInputs.cache
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.vbproj.CopyComplete
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.exe
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.xml
+C:\Users\Poodle Party\source\repos\Memoire2\Memoire\Memoire\obj\Release\Memoire.pdb

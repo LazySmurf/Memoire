@@ -1,0 +1,1 @@
+start "" "%~dp0Memoire.exe" -debug
